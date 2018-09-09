@@ -1,4 +1,4 @@
-# protobuf-storage.cr
+# protobuf-storage.cr [![Build Status](https://travis-ci.org/maiha/protobuf-storage.cr.svg?branch=master)](https://travis-ci.org/maiha/protobuf-storage.cr)
 
 A handy local storage of Protobuf for [Crystal](http://crystal-lang.org/).
 
@@ -98,7 +98,7 @@ s.load.size      # => 2
 s.write([user1]) # replaces "users.pb" with the given data
 s.load.size      # => 1
 
-s.clean          # remove "users.pb"
+s.clean          # removes "users.pb"
 s.load.size      # => 0 (even if the file doesn't exist.)
 ```
 
