@@ -142,9 +142,9 @@ describe "Protobuf::Storage(usecase)" do
       File.write("#{dir}/meta/schema.sql", "CREATE TABLE...")
     end
 
-    # TODO: care the noises
-    pending "should save pb files correctly" do
+    it "should save pb files correctly" do
       files = Dir.cd(dir) {Dir["**/*"].to_a.reject{|i| File.directory?(i)}}
+      files = files.reject{|i| i !~ /\.(pb|pb\.gz)$/} # care the noises
       expect(files.sort).to eq(paths)
     end
 

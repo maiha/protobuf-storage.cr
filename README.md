@@ -13,7 +13,7 @@ users = Protobuf::Storage(User).load("tmp/users.pb")
 users.size # => 2
 ```
 
-- crystal: 0.26.1
+- crystal: 0.30.0
 
 ## API
 
@@ -169,6 +169,66 @@ D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).save: 2 
 D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).save: 2 records (0.0 sec)
 D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).load
 D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).load # => 2
+```
+
+## House
+
+Protobuf::House(T) is a high level API that consists of metadata and data storage and tmp storage. This provides transaction-ish operations.
+
+```crystal
+Protobuf::House(T).new(dir : String)
+  
+Protobuf::House(T)
+  def load                       : Array(T)
+  def save(records, meta = nil)  : Storage(T)
+  def write(records, meta = nil) : Storage(T)
+  def tmp(records, meta = nil)   : Storage(T)
+  def commit(meta = nil)         : House(T)
+  def meta(meta : Hash)          : House(T)
+  def clean                      : House(T)
+  def dirty?                     : Bool
+  def clue                       : String
+```
+
+### House Example
+
+```crystal
+house = Protobuf::House(User).new("users")
+
+house.tmp(user1, {"status" => "writing user1"})
+# users/
+#  +- tmp/
+#      +- 00001.pb.gz
+#  +- meta/
+#      +- status
+
+house.commit({"status" => nil})
+# users/
+#  +- meta/
+#  +- data/
+#      +- 00001.pb.gz
+
+house.tmp(user2, {"status" => "writing user2"})
+# users/
+#  +- tmp/
+#      +- 00001.pb.gz
+#  +- meta/
+#      +- status
+#  +- data/
+#      +- 00001.pb.gz
+
+house.commit({"status" => nil})
+# users/
+#  +- meta/
+#  +- data/
+#      +- 00001.pb.gz
+
+house.meta({"done" => "true"})
+# users/
+#  +- meta/
+#      +- done
+#  +- data/
+#      +- 00001.pb.gz
 ```
 
 ## Contributing

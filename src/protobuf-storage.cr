@@ -4,4 +4,4 @@ require "gzip/gzip"
 require "protobuf"
 require "pretty"
 
-require "./protobuf/storage"
+require "./protobuf/*"
