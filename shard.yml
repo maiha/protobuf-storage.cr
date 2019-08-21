@@ -13,7 +13,7 @@ dependencies:
 
   pretty:
     github: maiha/pretty.cr
-    version: ">= 0.6.2"
+    version: ">= 0.7.0"
 
 development_dependencies:
   spec2:
