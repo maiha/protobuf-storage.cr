@@ -1,4 +1,15 @@
 class Protobuf::Storage(T)
+  module Api(T)
+    abstract def clue : String
+    abstract def load : Array(T)
+    abstract def save(records : Array(T))
+    abstract def save(record : T)
+    abstract def write(records : Array(T))
+    abstract def clean
+  end
+
+  include Api(T)
+
   private macro __array__
     {{T.name}}Array
   end
