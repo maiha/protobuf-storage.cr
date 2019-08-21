@@ -118,8 +118,50 @@ describe "Protobuf::House" do
     worker3.commit({"status" => nil})
     expect( worker3.meta["status"]?  ).to eq(nil)
     expect( worker3.load.map(&.name) ).to eq(["1", "2", "3"])
+  end
 
-    worker3.meta({"count" => worker3.load.size.to_s})
-    expect( worker3.meta["count"]?  ).to eq("3")
+  describe "#count" do
+    it "returns data count" do
+      Pretty::Dir.clean(path)
+      house.save(pb1)
+      expect( house.count ).to eq(1)
+
+      house.save([pb2, pb3])
+      expect( house.count ).to eq(3)
+
+      house.clean
+      expect( house.count ).to eq(0)
+
+      house.tmp([pb1, pb2])
+      expect( house.count ).to eq(0)
+
+      house.commit
+      expect( house.count ).to eq(2)
+
+      house.write(pb1)
+      expect( house.count ).to eq(1)
+    end
+
+    context "(no meta data)" do
+      it "fall back to load.size, and caches it in meta data" do
+        Pretty::Dir.clean(path)
+        expect( File.exists?("#{path}/meta/count") ).to eq(false)
+        expect( house.count                        ).to eq(0)
+        expect( File.exists?("#{path}/meta/count") ).to eq(true)
+      end
+    end
+
+    context "(as meta data)" do
+      it "can be read as meta data" do
+        Pretty::Dir.clean(path)
+        expect( house.meta["count"]? ).to eq(nil)
+        expect( house.count          ).to eq(0)
+        expect( house.meta["count"]? ).to eq("0")
+      end
+
+      it "raises when writing as meta data" do
+        expect{ house.meta["count"] = "0" }.to raise_error(ArgumentError)
+      end
+    end
   end
 end

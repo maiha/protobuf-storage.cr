@@ -189,7 +189,7 @@ Protobuf::House(T)
   def clue                       : String
 ```
 
-### House Example
+### House Directories
 
 ```crystal
 house = Protobuf::House(User).new("users")
@@ -228,6 +228,17 @@ house.meta({"done" => "true"})
 #      +- done
 #  +- data/
 #      +- 00001.pb.gz
+```
+
+### House Meta Count
+
+`House#count` returns the number of data cached in the meta data.
+When the amount of data is large, it works faster than `load.size`.
+
+```crystal
+house.count       # => 0
+house.save(user1)
+house.count       # => 1
 ```
 
 ## Contributing

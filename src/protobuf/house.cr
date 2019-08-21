@@ -4,6 +4,8 @@ class Protobuf::House(T)
   include Protobuf::Storage::Api(T)
 
   class Meta
+    SYSTEM_KEYS = ["count"]
+    
     def initialize(@dir : String)
     end
 
@@ -31,10 +33,14 @@ class Protobuf::House(T)
     end
 
     def [](key : String) : String
-      self[key]? || raise "No meta data: #{key.inspect}"
+      self[key]? || raise ArgumentError.new("No meta data: #{key.inspect}")
     end
 
-    def []=(key : String, val : String?)
+    def []=(key : String, val : String?, force : Bool = false)
+      if SYSTEM_KEYS.includes?(key) && force == false
+        raise ArgumentError.new("'#{key}' is system reserved")
+      end
+
       open {|dir|
         path = File.join(dir.path, key)
         if val
@@ -86,6 +92,7 @@ class Protobuf::House(T)
     records = [records] if records.is_a?(T)
     @data.save(records)
     @meta.update(meta)
+    force_update_meta("count", nil) # drop cache
     return @data
   end
   
@@ -93,6 +100,7 @@ class Protobuf::House(T)
     records = [records] if records.is_a?(T)
     @data.write(records)
     @meta.update(meta)
+    force_update_meta("count", records.size.to_s) # drop cache
     return @data
   end
   
@@ -110,6 +118,7 @@ class Protobuf::House(T)
       @tmp.clean
     end
     @meta.update(meta)
+    force_update_meta("count", nil) # drop cache
     return self
   end
 
@@ -124,12 +133,28 @@ class Protobuf::House(T)
     @meta.clean
     return self
   end
-  
+
   def dirty? : Bool
     @tmp.load.any?
   end
 
+  def count : Int32
+    case v = meta["count"]?
+    when /^(\d+)$/
+      return $1.to_i
+    else
+      # fall back to load.size
+      v = load.size
+      force_update_meta("count", v.to_s)
+      return v
+    end
+  end
+
   def clue : String
     data.clue
+  end
+
+  private def force_update_meta(key : String, v : String?)
+    meta.try(&.[]=("count", v, force: true))
   end
 end

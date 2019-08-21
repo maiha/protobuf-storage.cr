@@ -23,7 +23,7 @@ private macro execute(cmd)
 end
 
 describe "README.md" do
-  it "### House Example" do
+  it "### House Directories" do
     log = IO::Memory.new
 
     user1 = User.new(name: "risa")
@@ -39,7 +39,11 @@ describe "README.md" do
     execute  house.commit({"status" => nil})
     execute  house.meta({"done" => "true"})
 
-    expect( log.to_s.strip ).to eq README.code("### House Example")
+    expect( log.to_s.strip ).to eq README.code("### House Directories")
     Pretty.rm_rf("users")
   end
+
+  # count reserved word
+  
+  
 end
