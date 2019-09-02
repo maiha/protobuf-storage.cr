@@ -178,14 +178,23 @@ D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).load # =
 Protobuf::House(T).new(dir : String)
   
 Protobuf::House(T)
+  # storage
   def load                       : Array(T)
   def save(records, meta = nil)  : Storage(T)
   def write(records, meta = nil) : Storage(T)
+
+  # transaction
   def tmp(records, meta = nil)   : Storage(T)
   def commit(meta = nil)         : House(T)
   def meta(meta : Hash)          : House(T)
   def clean                      : House(T)
   def dirty?                     : Bool
+
+  # job
+  def checkin(group, value)      : House(T)
+  def checkout                   : String?
+  def resume?(group)             : String?
+
   def clue                       : String
 ```
 
@@ -239,6 +248,33 @@ When the amount of data is large, it works faster than `load.size`.
 house.count       # => 0
 house.save(user1)
 house.count       # => 1
+```
+
+### House Persisted Job
+
+`checkin` and `resume?` provide a simple persisted job.
+For example, imagine a job that calls api with ids from 'a' to 'z'.
+We can make the job persisted and idempotent easily.
+
+```crystal
+full_ids = ("a" .. "z")
+job_name = "foo"
+
+# resume suspended job
+if id = house.resume?(job_name)
+  rest_ids = (id .. "z")
+else
+  rest_ids = full_ids
+end
+
+# main job
+full_ids.each do |id|
+  house.checkin(job_name, id)
+  api_call(id)
+end
+
+# clear job
+house.checkout
 ```
 
 ## Contributing
