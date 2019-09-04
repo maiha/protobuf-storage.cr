@@ -207,38 +207,38 @@ house = Protobuf::House(User).new("users")
 
 house.tmp(user1, {"status" => "writing user1"})
 # users/
-#  +- tmp/
-#      +- 00001.pb.gz
 #  +- meta/
 #      +- status
+#  +- tmp/
+#      +- 00001.pb.gz
 
 house.commit({"status" => nil})
 # users/
-#  +- meta/
 #  +- data/
 #      +- 00001.pb.gz
+#  +- meta/
 
 house.tmp(user2, {"status" => "writing user2"})
 # users/
-#  +- tmp/
+#  +- data/
 #      +- 00001.pb.gz
 #  +- meta/
 #      +- status
-#  +- data/
+#  +- tmp/
 #      +- 00001.pb.gz
 
 house.commit({"status" => nil})
 # users/
-#  +- meta/
 #  +- data/
 #      +- 00001.pb.gz
+#  +- meta/
 
 house.meta({"done" => "true"})
 # users/
-#  +- meta/
-#      +- done
 #  +- data/
 #      +- 00001.pb.gz
+#  +- meta/
+#      +- done
 ```
 
 ### House Meta Count

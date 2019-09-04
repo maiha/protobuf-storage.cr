@@ -9,7 +9,7 @@ private def tree(dir, level = 0, io = IO::Memory.new, prefix = "")
     io.puts "%s%s%s" % [prefix, indent, File.basename(dir)]
   end
   if File.directory?(dir)
-    Dir.each_child(dir) do |file|
+    Dir.children(dir).sort.each do |file|
       tree(File.join(dir, file), level: level + 1, io: io, prefix: prefix)
     end
   end
@@ -42,8 +42,4 @@ describe "README.md" do
     expect( log.to_s.strip ).to eq README.code("### House Directories")
     Pretty.rm_rf("users")
   end
-
-  # count reserved word
-  
-  
 end
