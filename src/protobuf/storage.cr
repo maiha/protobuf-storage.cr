@@ -35,7 +35,6 @@ class Protobuf::Storage(T)
   end
 
   def load : Array(T)
-    logger.debug "[PB] %s(%s).load" % [T.name, @path]
     array = File.exists?(@path) ? load(@path) : Array(T).new
     logger.debug "[PB] %s(%s).load # => %s" % [T.name, @path, Pretty.number(array.size)]
     return array
@@ -83,8 +82,6 @@ class Protobuf::Storage(T)
 
   # append data
   def save(records : Array(T))
-    logger.debug "[PB] %s(%s).save: %d records" % [T.name, @path, records.size]
-
     process {
       real_path = @path
 
