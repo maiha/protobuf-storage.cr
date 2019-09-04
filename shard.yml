@@ -15,6 +15,9 @@ dependencies:
     github: maiha/pretty.cr
     version: ">= 0.7.0"
 
+  var:
+    github: maiha/var.cr
+
 development_dependencies:
   spec2:
     github: waterlink/spec2.cr

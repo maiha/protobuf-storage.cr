@@ -195,6 +195,8 @@ Protobuf::House(T)
   def checkout                   : String?
   def resume?                    : String?
 
+  # core
+  def chdir(new_dir)             : House(T)
   def clue                       : String
 ```
 

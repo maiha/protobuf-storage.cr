@@ -100,6 +100,13 @@ describe "Protobuf::House" do
       expect( house.meta["running"]?     ).to eq(nil)
       expect( house.load.map(&.name)     ).to eq(["1", "2", "3"])
     end
+
+    it "#chdir" do
+      child = house.chdir(File.join(house.dir, "child"))
+      full_path = File.expand_path("tmp/spec/lib/proto_house")
+      expect( house.dir ).to eq(full_path)
+      expect( child.dir ).to eq(full_path + "/child")
+    end
   end
 
   it "provides suspend and resume" do

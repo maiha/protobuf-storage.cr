@@ -66,7 +66,7 @@ class Protobuf::House(T)
   end
 
   def meta(meta : Hash(String, String?)?) : House(T)
-    @meta.update(meta)
+    self.meta.update(meta)
     return self
   end
 end

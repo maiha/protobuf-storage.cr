@@ -4,19 +4,24 @@ require "./house/*"
 class Protobuf::House(T)
   include Protobuf::Storage::Api(T)
 
-  property meta : Meta
-  property data : Protobuf::Storage(T)
-  property tmp  : Protobuf::Storage(T)
+  var meta : Meta
+  var data : Protobuf::Storage(T)
+  var tmp  : Protobuf::Storage(T)
 
-  property dir    : String
-  property logger : Logger
+  var dir    : String
+  var logger : Logger = Logger.new(nil)
+  var watch  : Pretty::Stopwatch
 
-  def initialize(dir : String, gzip : Bool = true, @logger : Logger = Logger.new(nil), watch : Pretty::Stopwatch? = nil)
-    @dir  = File.expand_path(dir).chomp("/")
+  def initialize(dir : String, @logger : Logger? = nil, @watch : Pretty::Stopwatch? = nil)
+    @dir = File.expand_path(dir).chomp("/")
 
-    @meta = Meta.new(File.join(@dir, "meta"))
-    @data = Storage(T).new(File.join(@dir, "data"), mode: Storage::Mode::DIR, gzip: gzip, logger: logger, watch: watch)
-    @tmp  = Storage(T).new(File.join(@dir, "tmp" ), mode: Storage::Mode::DIR, gzip: gzip, logger: logger, watch: watch)
+    @meta = Meta.new(File.join(dir, "meta"))
+    @data = Storage(T).new(File.join(dir, "data"), mode: Storage::Mode::DIR, gzip: true, logger: logger?, watch: watch?)
+    @tmp  = Storage(T).new(File.join(dir, "tmp" ), mode: Storage::Mode::DIR, gzip: true, logger: logger?, watch: watch?)
+  end
+
+  def chdir(dir)
+    self.class.new(dir, logger?, watch?)
   end
 
   def load : Array(T)
@@ -25,47 +30,47 @@ class Protobuf::House(T)
 
   def save(records : T | Array(T), meta : Hash(String, String?)? = nil) : Storage(T)
     records = [records] if records.is_a?(T)
-    @data.save(records)
-    @meta.update(meta)
+    self.data.save(records)
+    self.meta.update(meta)
     force_update_meta("count", nil) # drop cache
-    return @data
+    return data
   end
   
   def write(records : T | Array(T), meta : Hash(String, String?)? = nil) : Protobuf::Storage(T)
     records = [records] if records.is_a?(T)
-    @data.write(records)
-    @meta.update(meta)
+    data.write(records)
+    self.meta.update(meta)
     force_update_meta("count", records.size.to_s) # drop cache
-    return @data
+    return data
   end
   
   def tmp(records : T | Array(T), meta : Hash(String, String?)? = nil) : Storage(T)
     records = [records] if records.is_a?(T)
-    @tmp.save(records)
-    @meta.update(meta)
-    return @tmp
+    tmp.save(records)
+    self.meta.update(meta)
+    return tmp
   end
 
   def commit(meta : Hash(String, String?)? = nil) : House(T)
-    pbs = @tmp.load
+    pbs = tmp.load
     if pbs.any?
-      @data.write(@data.load + pbs)
-      @tmp.clean
+      data.write(data.load + pbs)
+      tmp.clean
     end
-    @meta.update(meta)
+    self.meta.update(meta)
     force_update_meta("count", nil) # drop cache
     return self
   end
 
   def clean : House(T)
-    @data.clean
-    @tmp.clean
-    @meta.clean
+    data.clean
+    tmp.clean
+    meta.clean
     return self
   end
 
   def dirty? : Bool
-    @tmp.load.any?
+    tmp.load.any?
   end
 
   def count : Int32
