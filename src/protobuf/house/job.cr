@@ -2,7 +2,13 @@ class Protobuf::House(T)
   META_JOB_GROUP = "job_group"
   META_JOB_VALUE = "job_value"
 
-  def checkin(group : String, value : String)
+  def checkin(value : String?)
+    meta({
+      META_JOB_VALUE => value,
+    })
+  end
+
+  def checkin(value : String?, group : String)
     meta({
       META_JOB_GROUP => group,
       META_JOB_VALUE => value,
@@ -17,6 +23,10 @@ class Protobuf::House(T)
     })
     return value
   end  
+
+  def resume? : String?
+    return meta[META_JOB_VALUE]?
+  end
 
   def resume?(group : String) : String?
     value = meta[META_JOB_VALUE]?

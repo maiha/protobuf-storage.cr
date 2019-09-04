@@ -191,9 +191,9 @@ Protobuf::House(T)
   def dirty?                     : Bool
 
   # job
-  def checkin(group, value)      : House(T)
+  def checkin(value)             : House(T)
   def checkout                   : String?
-  def resume?(group)             : String?
+  def resume?                    : String?
 
   def clue                       : String
 ```
@@ -258,10 +258,9 @@ We can make the job persisted and idempotent easily.
 
 ```crystal
 full_ids = ("a" .. "z")
-job_name = "foo"
 
 # resume suspended job
-if id = house.resume?(job_name)
+if id = house.resume?
   rest_ids = (id .. "z")
 else
   rest_ids = full_ids
@@ -269,13 +268,17 @@ end
 
 # main job
 full_ids.each do |id|
-  house.checkin(job_name, id)
+  house.checkin(id)
   api_call(id)
 end
 
 # clear job
 house.checkout
 ```
+
+#### `checkin(value, group)`, `resume?(group)`
+
+**group** can be used as checksum.
 
 ## Contributing
 
