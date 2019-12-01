@@ -175,8 +175,8 @@ D, [2018-09-10 03:04:42 +09:00 #12405] DEBUG -- : [PB] User(/tmp/users).load # =
 `Protobuf::House(T)` is a high level API that consists of metadata and data storage and tmp storage. This provides transaction-ish operations.
 
 ```crystal
-Protobuf::House(T).new(dir : String)
-  
+Protobuf::House(T).new(dir : String, schema : String? = nil, logger : Logger? = nil, watch : Pretty::Stopwatch? = nil)
+
 Protobuf::House(T)
   # storage
   def load                       : Array(T)
@@ -194,6 +194,11 @@ Protobuf::House(T)
   def checkin(value)             : House(T)
   def checkout                   : String?
   def resume?                    : String?
+
+  # meta data
+  def count                      : Int32
+  def schema?                    : String?
+  def schema                     : String
 
   # core
   def chdir(new_dir)             : House(T)
@@ -250,6 +255,19 @@ When the amount of data is large, it works faster than `load.size`.
 house.count       # => 0
 house.save(user1)
 house.count       # => 1
+```
+
+### House Meta Schema
+
+`House#schema` returns the schema string from argument and persisted meta directory.
+This is a feature for preserving schema strings, but does not validate the contents.
+
+```crystal
+house = Protobuf::House(User).new(path, schema: "message User { string name = 1; }")
+house.save(user1)
+
+house = Protobuf::House(User).new(path)
+house.schema # => "message User { string name = 1; }"
 ```
 
 ### House Persisted Job

@@ -12,7 +12,7 @@ class Protobuf::House(T)
   var logger : Logger = Logger.new(nil)
   var watch  : Pretty::Stopwatch
 
-  def initialize(dir : String, @logger : Logger? = nil, @watch : Pretty::Stopwatch? = nil)
+  def initialize(dir : String, @schema : String? = nil, @logger : Logger? = nil, @watch : Pretty::Stopwatch? = nil)
     @dir = File.expand_path(dir).chomp("/")
 
     @meta = Meta.new(File.join(dir, "meta"))
@@ -21,7 +21,7 @@ class Protobuf::House(T)
   end
 
   def chdir(dir)
-    self.class.new(dir, logger?, watch?)
+    self.class.new(dir, schema: schema?, logger: logger?, watch: watch?)
   end
 
   def load : Array(T)
@@ -33,6 +33,7 @@ class Protobuf::House(T)
     self.data.save(records)
     self.meta.update(meta)
     force_update_meta("count", nil) # drop cache
+    write_schema!
     return data
   end
   
@@ -40,7 +41,8 @@ class Protobuf::House(T)
     records = [records] if records.is_a?(T)
     data.write(records)
     self.meta.update(meta)
-    force_update_meta("count", records.size.to_s) # drop cache
+    force_update_meta("count", records.size.to_s) # write cache since I knows the number of data
+    write_schema!
     return data
   end
   
@@ -59,6 +61,7 @@ class Protobuf::House(T)
     end
     self.meta.update(meta)
     force_update_meta("count", nil) # drop cache
+    write_schema!
     return self
   end
 
@@ -85,11 +88,23 @@ class Protobuf::House(T)
     end
   end
 
+  def schema? : String?
+    @schema || meta[META_SCHEMA]? || nil
+  end
+
+  def schema : String
+    @schema || meta[META_SCHEMA]
+  end
+
+  private def write_schema!
+    force_update_meta(META_SCHEMA, @schema.to_s) if @schema
+  end
+
   def clue : String
     data.clue
   end
 
   private def force_update_meta(key : String, v : String?)
-    meta.try(&.[]=("count", v, force: true))
+    meta.try(&.[]=(key, v, force: true))
   end
 end

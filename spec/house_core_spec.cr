@@ -171,4 +171,34 @@ describe "Protobuf::House" do
       end
     end
   end
+
+  describe "#schema, #schema?" do
+    let(schema_string) { "foo" }
+    let(house1) { Protobuf::House(User).new(path, schema: schema_string) }
+    let(house2) { Protobuf::House(User).new(path) }
+
+    it "returns the schema string even if no writing has occurred" do
+      Pretty::Dir.clean(path)
+      expect( house1.schema? ).to eq("foo")
+      expect( house2.schema? ).to eq(nil)
+      expect( house1.schema  ).to eq("foo")
+      expect{ house2.schema  }.to raise_error(ArgumentError)
+    end
+
+    it "falls back to meta reference for instances with no schema argument" do
+      Pretty::Dir.clean(path)
+      house1.save(pb1)
+      expect( house1.schema? ).to eq("foo")
+      expect( house2.schema? ).to eq("foo")
+      expect( house1.schema  ).to eq("foo")
+      expect( house2.schema  ).to eq("foo")
+    end
+
+    it "respects schema argument even if the meta exists" do
+      house3 = Protobuf::House(User).new(path, schema: "bar")
+      expect( house1.schema  ).to eq("foo")
+      expect( house2.schema  ).to eq("foo")
+      expect( house3.schema  ).to eq("bar")
+    end
+  end
 end

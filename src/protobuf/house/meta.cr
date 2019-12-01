@@ -1,7 +1,10 @@
 class Protobuf::House(T)
+  META_COUNT  = "count"
+  META_SCHEMA = "schema.pb"
+
   class Meta
-    SYSTEM_KEYS = ["count"]
-    
+    SYSTEM_KEYS = [META_COUNT, META_SCHEMA]
+
     def initialize(@dir : String)
     end
 
