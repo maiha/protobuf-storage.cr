@@ -1,6 +1,21 @@
-require "markdown"
+{% if ::Crystal::VERSION =~ /^0\.(1\d|2\d|30)\./ %}
+  require "markdown"
 
-class Markdown
+  module Crystal::Doc::Markdown
+    module Renderer
+      include ::Markdown::Renderer
+    end
+
+    def self.parse(*args)
+      ::Markdown.parse(*args)
+    end
+  end
+
+{% else %}
+  require "compiler/crystal/tools/doc/markdown"
+{% end %}
+
+module Crystal::Doc::Markdown
   record Header, level : Int32, text : String do
     def self.parse(text : String)
       level = 1

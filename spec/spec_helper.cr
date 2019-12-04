@@ -8,8 +8,8 @@ include Spec2::GlobalDSL
 
 class Readme
   def initialize(path : String)
-    @renderer = Markdown::MemoryRenderer.new
-    Markdown.parse(File.read(path), @renderer)
+    @renderer = Crystal::Doc::Markdown::MemoryRenderer.new
+    Crystal::Doc::Markdown.parse(File.read(path), @renderer)
   end
 
   delegate code, to: @renderer

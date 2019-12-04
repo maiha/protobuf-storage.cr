@@ -13,7 +13,7 @@ users = Protobuf::Storage(User).load("tmp/users.pb")
 users.size # => 2
 ```
 
-- crystal: 0.30.0
+- crystal: 0.30.1, 0.31.1
 
 ## API
 
