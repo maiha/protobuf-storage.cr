@@ -10,10 +10,6 @@ class Protobuf::Storage(T)
 
   include Api(T)
 
-  private macro __array__
-    {{T.name}}Array
-  end
-
   getter logger
   getter path
   getter mode
@@ -73,7 +69,7 @@ class Protobuf::Storage(T)
           end
         end
       end
-      array = __array__.from_protobuf(io).array || Array(T).new
+      array = Array(T).from_protobuf(io)
     end
     return array.not_nil!
   rescue Errno
@@ -96,10 +92,10 @@ class Protobuf::Storage(T)
       File.open(real_path, "w+") do |file|
         if @gzip
           Gzip::Writer.open(file) do |gzip|
-            __array__.new(records).to_protobuf(gzip)
+            records.to_protobuf(gzip)
           end
         else
-          __array__.new(records).to_protobuf(file)
+          records.to_protobuf(file)
         end
       end
     }

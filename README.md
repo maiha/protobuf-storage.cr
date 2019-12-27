@@ -46,23 +46,7 @@ for adding `Protobuf::Message#[](key)`.
 
 ## Restriction about `*.proto`
 
-`Protobuf::Storage` persists the `XXX` protobuf class as a `XXXArray` class.
-This class definition needs to be prepared by the user.
-
-For example, when you declare `User`, you must declare `UserArray` too as follows.
-
-```protobuf
-message User {
-  required string name = 1;
-}
-
-// Add the following lines too.
-message UserArray {
-  repeated User array = 1;
-}
-```
-
-This would be converted to [user.pb.cr](./spec/user.pb.cr).
+`Protobuf::Storage` persists the `Array(T)` class as `repeated T = 1` using wire=2.
 
 ## Usage
 
