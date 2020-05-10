@@ -1,3 +1,12 @@
+# TODO: move to pretty.cr
+private macro file_error
+{% if compare_versions(Crystal::VERSION, "0.34.0-0") > 0 %}
+  File::Error
+{% else %}
+  Errno
+{% end %}
+end
+
 class Protobuf::Storage(T)
   module Api(T)
     abstract def clue : String
@@ -72,7 +81,7 @@ class Protobuf::Storage(T)
       array = Array(T).from_protobuf(io)
     end
     return array.not_nil!
-  rescue Errno
+  rescue file_error
     abort "Could not open file '%s': No such file or directory" % path
   end
 

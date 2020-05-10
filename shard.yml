@@ -13,14 +13,15 @@ dependencies:
 
   pretty:
     github: maiha/pretty.cr
-    version: ">= 0.7.0"
 
   var:
     github: maiha/var.cr
 
 development_dependencies:
   spec2:
-    github: waterlink/spec2.cr
-    version: ">= 0.11.0"
+    # github: waterlink/spec2.cr
+    # use fork for crystal-0.33 or higher
+    github: maiha/spec2.cr
+    version: ">= 0.12.0"
 
 license: MIT
