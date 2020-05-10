@@ -13,7 +13,7 @@ users = Protobuf::Storage(User).load("tmp/users.pb")
 users.size # => 2
 ```
 
-- crystal: 0.30.1, 0.31.1, 0.32.0
+- crystal: 0.27.2 0.31.1 0.32.1 0.33.0 0.34.0
 
 ## API
 
@@ -38,7 +38,7 @@ Add this to your application's `shard.yml`:
 dependencies:
   protobuf-storage:
     github: maiha/protobuf-storage.cr
-    version: 0.3.3
+    version: 0.3.4
 ```
 
 This depends `maiha/protobuf.cr` that is a fork of `jeromegn/protobuf.cr`
