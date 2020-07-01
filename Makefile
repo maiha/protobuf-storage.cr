@@ -1,17 +1,23 @@
 SHELL=/bin/bash
 
+export LC_ALL=C
+export UID = $(shell id -u)
+export GID = $(shell id -g)
+
+DOCKER_RUN=docker run -t -u $(UID):$(GID) -v $(PWD):/v -w /v --rm crystallang/crystal:0.34.0
+
 VERSION=
 CURRENT_VERSION=$(shell git tag -l | sort -V | tail -1)
 GUESSED_VERSION=$(shell git tag -l | sort -V | tail -1 | awk 'BEGIN { FS="." } { $$3++; } { printf "%d.%d.%d", $$1, $$2, $$3 }')
 
 .SHELLFLAGS = -o pipefail -c
 
-.PHONY : test
-test: check_version_mismatch spec
+.PHONY: ci
+ci: check_version_mismatch spec
 
 .PHONY : spec
 spec:
-	crystal spec -v --fail-fast
+	$(DOCKER_RUN) crystal spec -v --fail-fast
 
 .PHONY : check_version_mismatch
 check_version_mismatch: shard.yml README.md

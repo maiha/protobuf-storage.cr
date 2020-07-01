@@ -74,7 +74,7 @@ class Protobuf::Storage(T)
             buf = gzip.gets_to_end
             io = IO::Memory.new(buf)
           rescue err
-            abort "gzip: read error [path='%s']\n%s" % [path, err.to_s]
+            raise "gzip: read error [path='%s']\n%s" % [path, err.to_s]
           end
         end
       end
@@ -82,7 +82,7 @@ class Protobuf::Storage(T)
     end
     return array.not_nil!
   rescue file_error
-    abort "Could not open file '%s': No such file or directory" % path
+    raise "Could not open file '%s': No such file or directory" % path
   end
 
   # append data
