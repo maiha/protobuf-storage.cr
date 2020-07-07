@@ -9,7 +9,7 @@ dependencies:
     # github: jeromegn/protobuf.cr
     # use fork for Protobuf::Message[](key)
     github: maiha/protobuf.cr
-    branch: hash-accessors
+    branch: master
 
   pretty:
     github: maiha/pretty.cr

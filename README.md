@@ -50,6 +50,9 @@ for adding `Protobuf::Message#[](key)`.
 
 ## Usage
 
+`protobuf-storage` depends `maiha/protobuf.cr` to extend `Message::Fields` and `Message[](key)`.
+So please require just "protobuf-storage" without "protobuf".
+
 ```crystal
 require "protobuf-storage"
 ```
