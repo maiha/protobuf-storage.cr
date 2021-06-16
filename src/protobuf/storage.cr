@@ -61,7 +61,7 @@ class Protobuf::Storage(T)
     File.open(path) do |io|
       case path
       when /\.gz$/
-        Gzip::Reader.open(io) do |gzip|
+        Compress::Gzip::Reader.open(io) do |gzip|
           begin
             buf = gzip.gets_to_end
             io = IO::Memory.new(buf)
@@ -93,7 +93,7 @@ class Protobuf::Storage(T)
 
       File.open(real_path, "w+") do |file|
         if @gzip
-          Gzip::Writer.open(file) do |gzip|
+          Compress::Gzip::Writer.open(file) do |gzip|
             records.to_protobuf(gzip)
           end
         else

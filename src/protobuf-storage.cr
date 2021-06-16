@@ -1,6 +1,6 @@
-require "logger"
-require "gzip/gzip"
+require "compress/gzip"
 
+require "logger"
 require "protobuf"
 require "pretty"
 require "var"

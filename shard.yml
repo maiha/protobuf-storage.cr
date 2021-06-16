@@ -1,5 +1,5 @@
 name: protobuf-storage
-version: 0.3.7
+version: 0.4.0
 
 authors:
   - maiha <maiha@wota.jp>
@@ -9,7 +9,6 @@ dependencies:
     # github: jeromegn/protobuf.cr
     # use fork for Protobuf::Message[](key)
     github: maiha/protobuf.cr
-    branch: master
 
   pretty:
     github: maiha/pretty.cr
@@ -17,11 +16,13 @@ dependencies:
   var:
     github: maiha/var.cr
 
+  logger:
+    github: crystal-lang/logger.cr
+
 development_dependencies:
   spec2:
     # github: waterlink/spec2.cr
     # use fork for crystal-0.33 or higher
     github: maiha/spec2.cr
-    version: ">= 0.12.0"
 
 license: MIT
