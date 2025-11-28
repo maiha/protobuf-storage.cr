@@ -1,4 +1,4 @@
-# protobuf-storage.cr [![Build Status](https://travis-ci.org/maiha/protobuf-storage.cr.svg?branch=master)](https://travis-ci.org/maiha/protobuf-storage.cr)
+# protobuf-storage.cr [![CI](https://github.com/maiha/protobuf-storage.cr/actions/workflows/spec.yml/badge.svg)](https://github.com/maiha/protobuf-storage.cr/actions/workflows/spec.yml)
 
 A handy local storage of Protobuf for [Crystal](http://crystal-lang.org/).
 
