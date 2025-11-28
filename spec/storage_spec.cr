@@ -59,6 +59,25 @@ describe "Protobuf::Storage" do
     end
   end
 
+  context "(CESU-8 sanitization)" do
+    let(path) { "tmp/spec/lib/proto_storage/cesu8/User.pb" }
+    let(storage) { Protobuf::Storage(User).new(path) }
+
+    # 😺 (U+1F63A) as CESU-8: surrogate pair D83D DE3A encoded separately
+    let(cesu8_neko) { String.new(Bytes[0xed, 0xa0, 0xbd, 0xed, 0xb8, 0xba]) }
+    let(valid_neko) { "😺" }
+
+    it "should save record with CESU-8 string and convert to valid UTF-8" do
+      storage.clean
+      record = build_record("neko #{cesu8_neko} chan")
+      storage.save(record)
+
+      loaded = storage.load
+      expect(loaded.size).to eq(1)
+      expect(loaded.first.name).to eq("neko #{valid_neko} chan")
+    end
+  end
+
   context "(gzip)" do
     let(path) { "tmp/spec/lib/proto_storage/User/" }
     let(storage) { Protobuf::Storage(User).new(path, gzip: true) }
