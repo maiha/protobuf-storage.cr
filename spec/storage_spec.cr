@@ -76,6 +76,15 @@ describe "Protobuf::Storage" do
       expect(loaded.size).to eq(1)
       expect(loaded.first.name).to eq("neko #{valid_neko} chan")
     end
+
+    it "should raise error for invalid UTF-8 that is not CESU-8" do
+      storage.clean
+      # Isolated high surrogate (not a valid CESU-8 pair)
+      invalid = String.new(Bytes[0xed, 0xa0, 0xbd])
+      record = build_record("broken #{invalid} data")
+
+      expect { storage.save(record) }.to raise_error(Protobuf::Error)
+    end
   end
 
   context "(gzip)" do

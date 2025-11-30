@@ -222,8 +222,10 @@ class Protobuf::Storage(T)
     end
 
     fixed = String.new(result.to_slice)
-    # If still invalid after CESU-8 fix, use scrub as fallback
-    fixed.valid_encoding? ? fixed : fixed.scrub
+    unless fixed.valid_encoding?
+      raise Protobuf::Error.new("Invalid UTF-8 after CESU-8 fix: #{str.bytes.map(&.to_s(16)).join(" ")}")
+    end
+    fixed
   end
 
   private def max_seq_no : Int32
