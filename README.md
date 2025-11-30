@@ -288,6 +288,16 @@ house.checkout
 
 **group** can be used as checksum.
 
+## CESU-8 Handling
+
+Invalid UTF-8 strings (such as CESU-8 encoded surrogate pairs) are automatically converted to valid UTF-8 on save. This ensures protobuf serialization never fails due to encoding issues.
+
+When sanitization occurs, a warning is logged with before/after values:
+
+```text
+W, [2025-12-01 ...] WARN -- : [PB] sanitized invalid UTF-8: record[0].name: "neko \xED\xA0\xBD\xED\xB8\xBA chan" -> "neko 😺 chan"
+```
+
 ## Contributing
 
 1. Fork it (<https://github.com/maiha/protobuf-storage.cr/fork>)

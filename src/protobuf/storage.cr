@@ -169,14 +169,16 @@ class Protobuf::Storage(T)
 
   private def sanitize_records!(records : Array(T))
     records.size.times do |i|
-      records[i] = sanitize_message(records[i])
+      records[i] = sanitize_message(records[i], i)
     end
   end
 
-  private def sanitize_message(msg : T) : T forall T
+  private def sanitize_message(msg : T, index : Int32) : T forall T
     msg.to_hash.each do |name, val|
       if val.is_a?(String) && !val.valid_encoding?
-        msg[name] = fix_cesu8(val)
+        fixed = fix_cesu8(val)
+        logger.warn "[PB] sanitized invalid UTF-8: record[#{index}].#{name}: #{val.inspect} -> #{fixed.inspect}"
+        msg[name] = fixed
       end
     end
     msg
