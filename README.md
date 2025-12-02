@@ -38,7 +38,7 @@ Add this to your application's `shard.yml`:
 dependencies:
   protobuf-storage:
     github: maiha/protobuf-storage.cr
-    version: 0.5.0
+    version: 0.5.1
 ```
 
 This depends `maiha/protobuf.cr` that is a fork of `jeromegn/protobuf.cr`
